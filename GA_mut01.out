@@ -1,0 +1,19 @@
+population_size 20
+generations 50
+mutation_rate 0.01
+average_size/size_stdev 39.15 3.5
+
+0 7.05521720846 c1ccc(CCCCCCCCCCCc2ccccc2CCc2ccccc2-c2ccccc2)cc1 37
+1 5.36229715192 c1cc(-c2ccc3c(c2)Cc2ccccc2-3)cc(-c2ccc3c(c2)Cc2ccccc2-3)c1 32
+2 7.84586750565 c1ccc(-c2ccc(-c3ccc(-c4ccc(-c5ccc(-c6ccccc6)cc5)cc4)cc3)cc2)cc1 36
+3 7.94526734174 C1=C(c2ccc(-c3ccc(-c4ccccc4)cc3)cc2)CC=C(c2ccc(-c3ccc(-c4ccccc4)cc3)cc2)C1 42
+4 7.01200115221 CC(C)(c1cccc2cc3ccccc3cc12)C(C)(C)C(C)(C)C(C)(C)c1cccc2cc3ccccc3cc12 40
+5 7.88419158898 CCCc1cc(-c2ccc(C)cc2-c2ccccc2-c2ccc(C)c(-c3cc(-c4ccccc4C)ccc3C)c2)ccc1C 44
+6 7.90682174003 CC=CCc1cc(Cc2ccc(C)c(Cl)c2)ccc1-c1ccc(CCCC)c(-c2ccc(Cl)cc2)c1-c1ccc(C)c(Cl)c1 44
+7 7.187219635 C(=Cc1ccccc1)C(=Cc1ccc2cc3ccccc3cc2c1)c1ccc2cc3cc4ccccc4cc3cc2c1 42
+8 8.80423783984 c1ccc(CCCCCCCCCCCCCCCCCc2ccccc2CCCCCCc2ccccc2)cc1 41
+9 7.36945471961 c1ccc(-c2ccccc2-c2cccc(-c3ccccc3-c3ccccc3-c3ccccc3)c2)cc1 36
+
+time  291.696604013
+8.80423783984 7.43725758834 0.861004435742
+44 39.4 3.77359245282
