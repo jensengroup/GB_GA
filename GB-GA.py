@@ -130,7 +130,7 @@ print('mutation_rate', mutation_rate)
 print('average_size/size_stdev', co.average_size, co.size_stdev)
 print('')
 
-file_name = '1000.smi'
+file_name = 'ZINC_first_1000.smi'
 
 results = []
 size = []
