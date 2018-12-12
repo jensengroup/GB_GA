@@ -1,3 +1,6 @@
+'''
+Written by Jan H. Jensen 2018
+'''
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
