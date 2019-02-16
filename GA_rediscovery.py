@@ -67,11 +67,8 @@ if __name__ == "__main__":
     population = ga.make_initial_population(population_size,file_name)
 
     for generation in range(generations):
-      #if generation%10 == 0: print generation
       fitness = calculate_normalized_fitness(population,target)
-      #print('fitness',fitness)
       mating_pool = ga.make_mating_pool(population,fitness,population_size)
-      #print([Chem.MolToSmiles(m) for m in mating_pool])
       population = ga.reproduce(mating_pool,population_size,mutation_rate)
       if generation % 10 == 0:
         print(generation, sc.max_score[0], sc.max_score[1], Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
