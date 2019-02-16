@@ -19,9 +19,12 @@ def cut(mol):
 
   fragments_mol = Chem.FragmentOnBonds(mol,bs,addDummies=True,dummyLabels=[(1, 1)])
 
-  fragments = Chem.GetMolFrags(fragments_mol,asMols=True)
-  
-  return fragments
+  try:
+    fragments = Chem.GetMolFrags(fragments_mol,asMols=True)
+    return fragments
+  except:
+    return None
+
 
 def cut_ring(mol):
   for i in range(10):
@@ -41,7 +44,10 @@ def cut_ring(mol):
 
     fragments_mol = Chem.FragmentOnBonds(mol,bs,addDummies=True,dummyLabels=[(1, 1),(1,1)])
 
-    fragments = Chem.GetMolFrags(fragments_mol,asMols=True)
+    try:
+      fragments = Chem.GetMolFrags(fragments_mol,asMols=True)
+    except:
+      return None
 
     if len(fragments) == 2:
       return fragments
@@ -65,6 +71,9 @@ def ring_OK(mol):
 def mol_OK(mol):
   try:
     Chem.SanitizeMol(mol)
+    test_mol = Chem.MolFromSmiles(Chem.MolToSmiles(mol))
+    if test_mol == None:
+      return None
     target_size = size_stdev*np.random.randn() + average_size #parameters set in GA_mol
     if mol.GetNumAtoms() > 5 and mol.GetNumAtoms() < target_size:
       return True
@@ -107,7 +116,7 @@ def crossover_ring(parent_A,parent_B):
     new_mols2 = []
     for m in new_mols:
       m = m[0]
-      if mol_OK(m)and ring_OK(m):
+      if mol_OK(m) and ring_OK(m):
         new_mols2.append(m)
     
     if len(new_mols2) > 0:

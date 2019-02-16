@@ -8,18 +8,14 @@ import random
 import numpy as np
 import crossover as co
 
-#from io import StringIO
-#import sys
-#sio = sys.stderr = StringIO()
-
 from rdkit import rdBase
 rdBase.DisableLog('rdApp.error')
 
 def delete_atom():
-  choices = ['[*:1]~[D1:2]>>[*:1]', '[*:1]~[D2:2]~[*:3]>>[*:1]-[*:3]',
-             '[*:1]~[D3:2](~[*;!H0:3])~[*:4]>>[*:1]-[*:3]-[*:4]',
-             '[*:1]~[D4:2](~[*;!H0:3])(~[*;!H0:4])~[*:5]>>[*:1]-[*:3]-[*:4]-[*:5]',
-             '[*:1]~[D4:2](~[*;!H0;!H1:3])(~[*:4])~[*:5]>>[*:1]-[*:3](-[*:4])-[*:5]']
+  choices = ['[*:1]~[D1]>>[*:1]', '[*:1]~[D2]~[*:2]>>[*:1]-[*:2]',
+             '[*:1]~[D3](~[*;!H0:2])~[*:3]>>[*:1]-[*:2]-[*:3]',
+             '[*:1]~[D4](~[*;!H0:2])(~[*;!H0:3])~[*:4]>>[*:1]-[*:2]-[*:3]-[*:4]',
+             '[*:1]~[D4](~[*;!H0;!H1:2])(~[*:3])~[*:4]>>[*:1]-[*:2](-[*:3])-[*:4]']
   p = [0.25,0.25,0.25,0.1875,0.0625]
   
   return np.random.choice(choices, p=p)
@@ -114,7 +110,7 @@ def mutate(mol,mutation_rate):
     rxn_smarts_list[6] = append_atom()
     rxn_smarts = np.random.choice(rxn_smarts_list, p=p) 
     
-    #print 'mutation',rxn_smarts
+    #print('mutation',rxn_smarts)
     
     rxn = AllChem.ReactionFromSmarts(rxn_smarts)
 
