@@ -16,30 +16,20 @@ import mutate as mu
 import scoring_functions as sc
 import GB_GA as ga 
 
-def calculate_normalized_fitness(population):
-  fitness = []
+def calculate_scores(population):
+  scores = []
   for gene in population:
     score = sc.logP_score(gene)
-    fitness.append(max(float(score),0.0))
+    scores.append(max(float(score),0.0))
 
+  return scores 
+
+def calculate_normalized_fitness(scores):  
   #calculate probability
-  sum_fitness = sum(fitness)
-  normalized_fitness = [score/sum_fitness for score in fitness]
+  sum_scores = sum(scores)
+  normalized_fitness = [score/sum_scores for score in scores]
 
   return normalized_fitness
-
-def calculate_normalized_fitness2(population):
-  fitness = []
-  for gene in population:
-    score = sc.logP_score(gene)
-    #print('score',score)
-    fitness.append(float(score))
-
-  #calculate probability
-  new_fitness = [score - min(fitness) + 1. for score in fitness]
-  #print('new_fitness',new_fitness)
-  sum_fitness = sum(new_fitness)
-  normalized_fitness = [score/sum_fitness for score in new_fitness]
 
 
 
@@ -49,6 +39,7 @@ if __name__ == "__main__":
 
 
   population_size = 20 
+  mating_pool_size = 20
   generations = 50
   mutation_rate = 0.01
 
@@ -56,6 +47,7 @@ if __name__ == "__main__":
   co.size_stdev = 3.50
 
   print('population_size', population_size)
+  print('mating_pool_size', mating_pool_size)
   print('generations', generations)
   print('mutation_rate', mutation_rate)
   print('average_size/size_stdev', co.average_size, co.size_stdev)
@@ -67,23 +59,27 @@ if __name__ == "__main__":
   size = []
   t0 = time.time()
   all_scores = []
-  for i in range(10):
-    sc.max_score = [-99999.,'']
-    sc.count = 0
-    population = ga.make_initial_population(population_size,file_name)
+  for i in range(5):
+      sc.max_score = [-99999.,'']
+      sc.count = 0
+      population = ga.make_initial_population(population_size,file_name)
+      scores = calculate_scores(population)
+      fitness = calculate_normalized_fitness(scores)
 
-    scores = []
-    for generation in range(generations):
-      #if generation%10 == 0: print generation
-      fitness = calculate_normalized_fitness(population)
-      mating_pool = ga.make_mating_pool(population,fitness,population_size)
-      population = ga.reproduce(mating_pool,population_size,mutation_rate)
-      scores.append(sc.max_score[0])
+      for generation in range(generations):
+        mating_pool = ga.make_mating_pool(population,fitness,mating_pool_size)
+        new_population = ga.reproduce(mating_pool,population_size,mutation_rate)
+        new_scores = calculate_scores(new_population)
+        population_tuples = list(zip(scores+new_scores,population+new_population))
+        population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
+        population = [t[1] for t in population_tuples]
+        scores = [t[0] for t in population_tuples]  
+        fitness = calculate_normalized_fitness(scores)
 
-    all_scores.append(scores)
-    print(i, sc.max_score[0], sc.max_score[1], Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
-    results.append(sc.max_score[0])
-    size.append(Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
+      all_scores.append(scores)
+      print(i, sc.max_score[0], sc.max_score[1], Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
+      results.append(sc.max_score[0])
+      size.append(Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
 
   t1 = time.time()
   print('')
