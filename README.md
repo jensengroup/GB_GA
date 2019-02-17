@@ -1,4 +1,4 @@
 # GB-GA
-[Graph-based genetic algorithm](https://doi.org/10.26434/chemrxiv.7240751)
+[Graph-based genetic algorithm](http://dx.doi.org/10.1039/C8SC05372C)
  
-usage python GA-GB.py 
+usage example: 'python GA_logP.py'  
