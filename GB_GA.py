@@ -48,9 +48,9 @@ def calculate_normalized_fitness(population):
     
   return normalized_fitness
 
-def make_mating_pool(population,fitness,population_size):
+def make_mating_pool(population,fitness,mating_pool_size):
   mating_pool = []
-  for i in range(population_size):
+  for i in range(mating_pool_size):
   	mating_pool.append(np.random.choice(population, p=fitness))
 
   return mating_pool
