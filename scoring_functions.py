@@ -25,8 +25,15 @@ logP_std= np.std(logP_values)
 cycle_mean = np.mean(cycle_scores)
 cycle_std=np.std(cycle_scores)
 
+def calculate_scores(population,function,scoring_args):
+  scores = []
+  for gene in population:
+    score = function(gene,scoring_args)
+    scores.append(score)
 
-def logP_score(m):
+  return scores 
+
+def logP_score(m,dummy):
   try:
   	logp = Descriptors.MolLogP(m)
   except:
@@ -53,14 +60,7 @@ def logP_score(m):
   cycle_score_norm=(cycle_score-cycle_mean)/cycle_std
   score_one = SA_score_norm + logp_norm + cycle_score_norm
   
-  global max_score
-  global count
-  
-  count += 1
-  if score_one > max_score[0]:
-    max_score = [score_one, Chem.MolToSmiles(m)]
-  
-  return score_one
+  return max(score_one,0.0)
 
 # GuacaMol article https://arxiv.org/abs/1811.09621
 # adapted from https://github.com/BenevolentAI/guacamol/blob/master/guacamol/utils/fingerprints.py
@@ -82,22 +82,13 @@ def get_FCFP6(mol):
 def ThresholdedLinearModifier(score,threshold):
   return min(score,threshold)/threshold
 
-def rediscovery(mol,target):
-  global max_score
-  global count
+def rediscovery(mol,args):
+  target = args[0]
   try:
     fp_mol = get_ECFP4(mol)
     fp_target = get_ECFP4(target)
 
-    #print('got fp')
-
     score = TanimotoSimilarity(fp_mol, fp_target)
-
-    #print('got score',score)
-
-    count += 1
-    if score > max_score[0]:
-      max_score = [score, Chem.MolToSmiles(mol)]
 
     return score
   
@@ -114,4 +105,4 @@ def similarity(mol,target,threshold):
 
 
 if __name__ == "__main__":
-    main()
+    pass

@@ -34,18 +34,10 @@ def make_initial_population(population_size,file_name):
     
   return population
 
+def calculate_normalized_fitness(scores):
+  sum_scores = sum(scores)
+  normalized_fitness = [score/sum_scores for score in scores]
 
-def calculate_normalized_fitness(population):
-  fitness = []
-  for gene in population:
-    score = sc.logP_score(gene)
-    fitness.append(max(float(score),0.0))
-  
-  #calculate probability
-  sum_fitness = sum(fitness)
-  normalized_fitness = [score/sum_fitness for score in fitness]
-
-    
   return normalized_fitness
 
 def make_mating_pool(population,fitness,mating_pool_size):
@@ -73,6 +65,25 @@ def reproduce(mating_pool,population_size,mutation_rate):
   
   return new_population
 
+def GA(population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate,
+       scoring_args):
+
+  population = make_initial_population(population_size,file_name)
+  scores = sc.calculate_scores(population,scoring_function,scoring_args)
+  fitness = calculate_normalized_fitness(scores)
+
+  for generation in range(generations):
+    mating_pool = make_mating_pool(population,fitness,mating_pool_size)
+    new_population = reproduce(mating_pool,population_size,mutation_rate)
+    new_scores = sc.calculate_scores(new_population,scoring_function,scoring_args)
+    population_tuples = list(zip(scores+new_scores,population+new_population))
+    population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
+    population = [t[1] for t in population_tuples]
+    scores = [t[0] for t in population_tuples]  
+    fitness = calculate_normalized_fitness(scores)
+
+  return scores, population
+
 
 if __name__ == "__main__":
-    main()
+    pass
