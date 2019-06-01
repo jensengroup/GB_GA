@@ -66,16 +66,16 @@ def reproduce(mating_pool,population_size,mutation_rate):
   return new_population
 
 def GA(population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate,
-       scoring_args):
+       scoring_args,n_cpus):
 
   population = make_initial_population(population_size,file_name)
-  scores = sc.calculate_scores(population,scoring_function,scoring_args)
+  scores = sc.calculate_scores_parallel(population,scoring_function,scoring_args,n_cpus)
   fitness = calculate_normalized_fitness(scores)
 
   for generation in range(generations):
     mating_pool = make_mating_pool(population,fitness,mating_pool_size)
     new_population = reproduce(mating_pool,population_size,mutation_rate)
-    new_scores = sc.calculate_scores(new_population,scoring_function,scoring_args)
+    new_scores = sc.calculate_scores_parallel(new_population,scoring_function,scoring_args,n_cpus)
     population_tuples = list(zip(scores+new_scores,population+new_population))
     population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
     population = [t[1] for t in population_tuples]

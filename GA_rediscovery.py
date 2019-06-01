@@ -16,6 +16,7 @@ co.average_size = target.GetNumAtoms()
 co.size_stdev = 5
 scoring_function = sc.rediscovery
 scoring_args = [target]
+n_cpus = 2
 
 file_name = 'ZINC_first_1000.smi'
 file_name = 'Celecoxib_1000_50.smi'
@@ -29,6 +30,7 @@ print('mutation_rate', mutation_rate)
 print('average_size/size_stdev', co.average_size, co.size_stdev)
 print('initial pool', file_name)
 print('number of tries', n_tries)
+print('number of CPUs', n_cpus)
 print('')
 
 results = []
@@ -37,7 +39,7 @@ t0 = time.time()
 all_scores = []
 for i in range(n_tries):     
     scores, population = ga.GA(population_size, file_name,scoring_function,generations,mating_pool_size, 
-                               mutation_rate,scoring_args)
+                               mutation_rate,scoring_args,n_cpus)
     all_scores.append(scores)
     print(i, scores[0], Chem.MolToSmiles(population[0]))
     results.append(scores[0])

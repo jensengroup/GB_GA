@@ -12,6 +12,7 @@ rdBase.DisableLog('rdApp.error')
 
 import numpy as np
 import sys
+from multiprocessing import Pool
 
 import sascorer
 
@@ -24,6 +25,24 @@ logP_mean = np.mean(logP_values)
 logP_std= np.std(logP_values)
 cycle_mean = np.mean(cycle_scores)
 cycle_std=np.std(cycle_scores)
+
+def calculate_score(args):
+  gene = args[0]
+  function = args[1]
+  scoring_args = args[2]
+  score = function(gene,scoring_args)
+  return score
+
+def calculate_scores_parallel(population,function,scoring_args, n_cpus):
+  args_list = []
+  args = [function, scoring_args]
+  for gene in population:
+    args_list.append([gene]+args)
+
+  with Pool(n_cpus) as pool:
+    scores = pool.map(calculate_score, args_list)
+
+  return scores
 
 def calculate_scores(population,function,scoring_args):
   scores = []

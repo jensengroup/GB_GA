@@ -5,7 +5,7 @@ import crossover as co
 import scoring_functions as sc
 import GB_GA as ga 
 
-n_tries = 1
+n_tries = 2
 population_size = 20 
 mating_pool_size = 20
 generations = 20
@@ -14,6 +14,7 @@ co.average_size = 39.15
 co.size_stdev = 3.50
 scoring_function = sc.logP_score
 scoring_args = []
+n_cpus = 1
 
 file_name = 'ZINC_first_1000.smi'
 
@@ -24,6 +25,7 @@ print('mutation_rate', mutation_rate)
 print('average_size/size_stdev', co.average_size, co.size_stdev)
 print('initial pool', file_name)
 print('number of tries', n_tries)
+print('number of CPUs', n_cpus)
 print('')
 
 results = []
@@ -32,7 +34,7 @@ t0 = time.time()
 all_scores = []
 for i in range(n_tries):     
     scores, population = ga.GA(population_size, file_name,scoring_function,generations,mating_pool_size, 
-                               mutation_rate,scoring_args)
+                               mutation_rate,scoring_args,n_cpus)
     all_scores.append(scores)
     print(i, scores[0], Chem.MolToSmiles(population[0]))
     results.append(scores[0])
