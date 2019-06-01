@@ -4,6 +4,7 @@ import time
 import crossover as co
 import scoring_functions as sc
 import GB_GA as ga 
+import sys
 
 n_tries = 2
 population_size = 20 
@@ -16,7 +17,7 @@ scoring_function = sc.logP_score
 scoring_args = []
 n_cpus = 1
 
-file_name = 'ZINC_first_1000.smi'
+file_name = sys.argv[1]
 
 print('population_size', population_size)
 print('mating_pool_size', mating_pool_size)

@@ -4,6 +4,7 @@ import time
 import crossover as co
 import scoring_functions as sc
 import GB_GA as ga 
+import sys
 
 Celecoxib = 'O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'
 target = Chem.MolFromSmiles(Celecoxib)
@@ -18,9 +19,7 @@ scoring_function = sc.rediscovery
 scoring_args = [target]
 n_cpus = 2
 
-file_name = 'ZINC_first_1000.smi'
-file_name = 'Celecoxib_1000_50.smi'
-file_name = 'Celecoxib_1000_100.smi'
+file_name = sys.argv[1]
 
 print('target', Celecoxib)
 print('population_size', population_size)
