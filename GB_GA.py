@@ -67,7 +67,7 @@ def reproduce(mating_pool,population_size,mutation_rate):
 
 def GA(args):
   population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate, \
-  scoring_args = args
+  scoring_args, max_score = args
 
   population = make_initial_population(population_size,file_name)
   scores = sc.calculate_scores(population,scoring_function,scoring_args)
@@ -82,8 +82,10 @@ def GA(args):
     population = [t[1] for t in population_tuples]
     scores = [t[0] for t in population_tuples]  
     fitness = calculate_normalized_fitness(scores)
+    if scores[0] >= max_score:
+      break
 
-  return (scores, population)
+  return (scores, population, generation+1)
 
 
 if __name__ == "__main__":

@@ -118,7 +118,7 @@ def rediscovery(mol,args):
 def similarity(mol,target,threshold):
   score = rediscovery(mol,target)
   if score:
-    return score * ThresholdedLinearModifier(score,threshold)
+    return ThresholdedLinearModifier(score,threshold)
   else:
     return None
 
