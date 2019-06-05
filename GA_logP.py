@@ -45,16 +45,16 @@ for i in range(n_tries):
     #(scores, population) = ga.GA([population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate,scoring_args])
     (scores, population, generation) = output[i]
     all_scores.append(scores)
-    print(f'{i} {scores[0]:.2f} {Chem.MolToSmiles(population[0])}')
+    print(f'{i} {scores[0]:.2f} {Chem.MolToSmiles(population[0])} {generation}')
     results.append(scores[0])
     generations_list.append(generation)
     #size.append(Chem.MolFromSmiles(sc.max_score[1]).GetNumAtoms())
 
 t1 = time.time()
 print('')
-print(f'time {(t1-t0)/60.0:.2f} minutes')
 print(f'max score {max(results):.2f}, mean {np.array(results).mean():.2f} +/- {np.array(results).std():.2f}')
 print(f'mean generations {np.array(generations_list).mean():.2f} +/- {np.array(generations_list).std():.2f}')
+print(f'time {(t1-t0)/60.0:.2f} minutes')
 #print(max(size),np.array(size).mean(),np.array(size).std())
 
 #print(all_scores)
