@@ -5,10 +5,11 @@ import crossover as co
 import scoring_functions as sc
 import GB_GA as ga 
 import sys
+from multiprocessing import Pool
 
 Celecoxib = 'O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'
 target = Chem.MolFromSmiles(Celecoxib)
-n_tries = 1
+n_tries = 2
 population_size = 20 
 mating_pool_size = 20
 generations = 20
@@ -36,9 +37,13 @@ results = []
 size = []
 t0 = time.time()
 all_scores = []
+args = n_tries*[[population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate,scoring_args]]
+with Pool(n_cpus) as pool:
+    output = pool.map(ga.GA, args)
+
 for i in range(n_tries):     
-    scores, population = ga.GA(population_size, file_name,scoring_function,generations,mating_pool_size, 
-                               mutation_rate,scoring_args,n_cpus)
+    #(scores, population) = ga.GA([population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate,scoring_args])
+    (scores, population) = output[i]
     all_scores.append(scores)
     print(i, scores[0], Chem.MolToSmiles(population[0]))
     results.append(scores[0])
@@ -46,7 +51,7 @@ for i in range(n_tries):
 
 t1 = time.time()
 print('')
-print('time ',t1-t0)
+print('time ',(t1-t0)/60.0)
 print(max(results),np.array(results).mean(),np.array(results).std())
 #print(max(size),np.array(size).mean(),np.array(size).std())
 

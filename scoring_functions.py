@@ -27,13 +27,13 @@ cycle_mean = np.mean(cycle_scores)
 cycle_std=np.std(cycle_scores)
 
 def calculate_score(args):
-  gene = args[0]
-  function = args[1]
-  scoring_args = args[2]
+  '''Parallelize at the score level (not currently in use)'''
+  gene, function, scoring_args = args
   score = function(gene,scoring_args)
   return score
 
 def calculate_scores_parallel(population,function,scoring_args, n_cpus):
+  '''Parallelize at the score level (not currently in use)'''
   args_list = []
   args = [function, scoring_args]
   for gene in population:
