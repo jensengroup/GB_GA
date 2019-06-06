@@ -1,4 +1,10 @@
 Tanimoto_sort.py
+Tanimoto_score_smiles.py 
+Tanimoto_250K.Tanimoto_score_smiles
+guacamol_v1_all.smi
+tiotixene_1000_100.smi
+TanimotoGuacamol.smi
+Tanimoto250K.smi
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
