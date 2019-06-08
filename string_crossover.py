@@ -24,16 +24,17 @@ def mol2string(mol):
     Chem.Kekulize(mol, clearAromaticFlags=True)
     smiles = Chem.MolToSmiles(mol)
 
-    if selfies:
+    if string_type == 'selfies':
         return encoder(smiles).split('][')
 
-    if d_smiles:
+    if string_type == 'deepsmiles':
         string = converter.encode(smiles)
-
-    return list(string)
+        return list(string)
+    
+    return list(smiles)
 
 def string2mol(string):
-    if selfies:
+    if string_type == 'selfies':
         string = ']['.join(string)
         try:
             smiles = decoder(string,PrintErrorMessage=False)
@@ -41,8 +42,11 @@ def string2mol(string):
             return None
     else:
         string = ''.join(string)
+    
+    if string_type == 'smiles':
+        smiles = string
 
-    if d_smiles:
+    if string_type == 'deepsmiles':
         try:
             smiles = converter.decode(string)
         except deepsmiles.DecodeError as e:
@@ -64,7 +68,7 @@ def crossover(parent_a_mol,parent_b_mol):
         b2 = parent_b[cut_point_b:len(parent_b)]
         child_string = a1 + b2
         child_mol = string2mol(child_string)
-        #print(child_smiles,Chem.MolToSmiles(child_mol),child_mol,co.mol_OK(child_mol))
+        #print(child_string,Chem.MolToSmiles(child_mol),child_mol,co.mol_OK(child_mol))
         if co.mol_OK(child_mol):
             return child_mol
 
@@ -73,8 +77,7 @@ def crossover(parent_a_mol,parent_b_mol):
 if __name__ == "__main__":
     co.average_size = 39.15
     co.size_stdev = 3.50
-    d_smiles = False
-    selfies = True
+    string_type = 'smiles'
     mol1 = Chem.MolFromSmiles('CCC(CCCC)C')
     mol2 = Chem.MolFromSmiles('OCCCCCCO')
     mol2 = Chem.MolFromSmiles('OCCCCCCc1ccccc1')

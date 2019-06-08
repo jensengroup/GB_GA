@@ -8,7 +8,6 @@ import numpy as np
 import time
 import crossover as co
 import scoring_functions as sc
-import string_mutate as stmu
 import string_crossover as stco
 import GB_GA as ga 
 import sys
@@ -21,14 +20,12 @@ generations = 20
 mutation_rate = 0.01
 co.average_size = 39.15
 co.size_stdev = 3.50
-stco.d_smiles = True
+stco.string_type = 'deepsmiles'
 scoring_function = sc.logP_score
 max_score = 9999.
 scoring_args = []
 n_cpus = 2
-stmu.symbols = ['C', 'N', ')', 'S', '=', 'O', '6', '5', '9', 'B', 'Br', '[C@@H]', '[C@H]', 'H', 
-               '+', '%10', '%11', '%12', '%13', '%14', '%15', '%16', '%17', '1', '0', '2', 'l',
-                '3', 'F', '#', '7', 'I', '-', '/', '\\', '4', '8']
+
 
 file_name = sys.argv[1]
 

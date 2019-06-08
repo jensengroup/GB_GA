@@ -21,22 +21,11 @@ generations = 20
 mutation_rate = 0.01
 co.average_size = 39.15
 co.size_stdev = 3.50
-stco.d_smiles = False
-stco.selfies = True
+stco.string_type = 'selfies'
 scoring_function = sc.logP_score
 max_score = 9999.
 scoring_args = []
 n_cpus = 2
-stmu.symbols = ['C', 'Branch1_2', 'epsilon', 'Branch1_3', '=C', 'O', '#N', '=O', 'N', 'Ring1', 
-               'Branch1_1', 'F', '=N', '#C', 'C@@H', 'S', 'Branch2_2', 'Ring2', 'Branch2_3', 
-               'Branch2_1', 'Cl', 'O-', 'C@H', 'NH+', 'C@', 'Br', '/C', '/O', 'NH3+', '=S', 'NH2+', 
-               'C@@', '=N+', '=NH+', 'N+', '\\C', '\\O', '/N', '/S', '\\S', 'S@', '\\O-', 'N-', '/NH+', 
-               'S@@', '=NH2+', '/O-', 'S-', '/S-', 'I', '\\N', '\\Cl', '=P', '/F', '/C@H', '=OH+', 
-                '\\S-', '=S@@', '/C@@H', 'P', '=S@', '\\C@@H', '/S@', '/Cl', '=N-', '/N+', 'NH-', 
-                '\\C@H', 'P@@H', 'P@@', '\\N-', 'Expl\\Ring1', '=P@@', '=PH2', '#N+', '\\NH+', 'P@', 
-                'P+', '\\N+', 'Expl/Ring1', 'S+', '=O+', '/N-', 'CH2-', '=P@', '=SH+', 'CH-', '/Br', 
-                '/C@@', '\\Br', '/C@', '/O+', '\\F', '=S+', 'PH+', '\\NH2+', 'PH', '/NH-', '\\S@', 'S@@+', 
-                '/NH2+', '\\I']
 
 file_name = sys.argv[1]
 
