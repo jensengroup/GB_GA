@@ -1,6 +1,7 @@
 '''
 Written by Jan H. Jensen 2018
 '''
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
@@ -16,6 +17,8 @@ import sys
 
 import crossover as co
 import mutate as mu
+#import string_crossover as co
+#import string_mutate as mu
 import scoring_functions as sc
 
 def read_file(file_name):
@@ -50,19 +53,15 @@ def make_mating_pool(population,fitness,mating_pool_size):
 
 def reproduce(mating_pool,population_size,mutation_rate):
   new_population = []
-  for n in range(population_size):
+  while len(new_population) < population_size:
     parent_A = random.choice(mating_pool)
     parent_B = random.choice(mating_pool)
-    #print Chem.MolToSmiles(parent_A),Chem.MolToSmiles(parent_B)
     new_child = co.crossover(parent_A,parent_B)
-    #print new_child
     if new_child != None:
 	    new_child = mu.mutate(new_child,mutation_rate)
-	    #print "after mutation",new_child
 	    if new_child != None:
 	    	new_population.append(new_child)
 
-  
   return new_population
 
 def GA(args):

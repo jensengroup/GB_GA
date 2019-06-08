@@ -129,4 +129,4 @@ def mutate(mol,mutation_rate):
   return None
 
 if __name__ == "__main__":
-    main()
+    pass
