@@ -1,5 +1,6 @@
 '''
-Written by Jan H. Jensen 2018
+Written by Jan H. Jensen 2018. 
+Many subsequent changes inspired by https://github.com/BenevolentAI/guacamol_baselines/tree/master/graph_ga
 '''
 
 from rdkit import Chem
@@ -64,6 +65,21 @@ def reproduce(mating_pool,population_size,mutation_rate):
 
   return new_population
 
+def sanitize(population,scores,population_size):
+    smiles_list = []
+    population_tuples = []
+    for score, mol in zip(scores,population):
+        smiles = Chem.MolToSmiles(mol)
+        if smiles not in smiles_list:
+            smiles_list.append(smiles)
+            population_tuples.append((score,mol))
+
+    population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
+    new_population = [t[1] for t in population_tuples]
+    new_scores = [t[0] for t in population_tuples]
+
+    return new_population, new_scores
+
 def GA(args):
   population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate, \
   scoring_args, max_score = args
@@ -76,10 +92,7 @@ def GA(args):
     mating_pool = make_mating_pool(population,fitness,mating_pool_size)
     new_population = reproduce(mating_pool,population_size,mutation_rate)
     new_scores = sc.calculate_scores(new_population,scoring_function,scoring_args)
-    population_tuples = list(zip(scores+new_scores,population+new_population))
-    population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
-    population = [t[1] for t in population_tuples]
-    scores = [t[0] for t in population_tuples]  
+    population, scores = sanitize(population+new_population, scores+new_scores, population_size)  
     fitness = calculate_normalized_fitness(scores)
     if scores[0] >= max_score:
       break
