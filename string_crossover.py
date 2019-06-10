@@ -22,7 +22,7 @@ def cut_point(parent):
 
 def mol2string(mol):
     Chem.Kekulize(mol, clearAromaticFlags=True)
-    smiles = Chem.MolToSmiles(mol)
+    smiles = Chem.MolToSmiles(mol, canonical=False)
 
     if string_type == 'selfies':
         return encoder(smiles).split('][')
