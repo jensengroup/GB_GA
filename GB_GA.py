@@ -65,14 +65,17 @@ def reproduce(mating_pool,population_size,mutation_rate):
 
   return new_population
 
-def sanitize(population,scores,population_size):
-    smiles_list = []
-    population_tuples = []
-    for score, mol in zip(scores,population):
-        smiles = Chem.MolToSmiles(mol)
-        if smiles not in smiles_list:
-            smiles_list.append(smiles)
-            population_tuples.append((score,mol))
+def sanitize(population,scores,population_size, prune_population):
+    if prune_population:
+      smiles_list = []
+      population_tuples = []
+      for score, mol in zip(scores,population):
+          smiles = Chem.MolToSmiles(mol)
+          if smiles not in smiles_list:
+              smiles_list.append(smiles)
+              population_tuples.append((score,mol))
+    else:
+      population_tuples = list(zip(scores,population))
 
     population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)[:population_size]
     new_population = [t[1] for t in population_tuples]
@@ -82,7 +85,7 @@ def sanitize(population,scores,population_size):
 
 def GA(args):
   population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate, \
-  scoring_args, max_score = args
+  scoring_args, max_score, prune_population = args
 
   population = make_initial_population(population_size,file_name)
   scores = sc.calculate_scores(population,scoring_function,scoring_args)
@@ -92,7 +95,7 @@ def GA(args):
     mating_pool = make_mating_pool(population,fitness,mating_pool_size)
     new_population = reproduce(mating_pool,population_size,mutation_rate)
     new_scores = sc.calculate_scores(new_population,scoring_function,scoring_args)
-    population, scores = sanitize(population+new_population, scores+new_scores, population_size)  
+    population, scores = sanitize(population+new_population, scores+new_scores, population_size, prune_population)  
     fitness = calculate_normalized_fitness(scores)
     if scores[0] >= max_score:
       break

@@ -14,9 +14,11 @@ generations = 20
 mutation_rate = 0.01
 co.average_size = 39.15
 co.size_stdev = 3.50
-scoring_function = sc.logP_max
-max_score = 9999.
-scoring_args = []
+scoring_function = sc.logP_target
+max_score = 0.99
+target = 8.
+sigma = 2.
+scoring_args = [target,sigma]
 prune_population = True
 n_cpus = 2
 
@@ -30,6 +32,7 @@ print('max_score', max_score)
 print('average_size/size_stdev', co.average_size, co.size_stdev)
 print('initial pool', file_name)
 print('prune_population', prune_population)
+print('target +/ sigma', target, sigma)
 print('number of tries', n_tries)
 print('number of CPUs', n_cpus)
 print('')

@@ -52,7 +52,18 @@ def calculate_scores(population,function,scoring_args):
 
   return scores 
 
-def logP_score(m,dummy):
+def logP_max(m, dummy):
+  score = logP_score(m)
+  return max(0.0, score)
+
+def logP_target(m,args):
+  target, sigma = args
+  score = logP_score(m)
+  score = GaussianModifier(score, target, sigma)
+  return score
+
+
+def logP_score(m):
   try:
   	logp = Descriptors.MolLogP(m)
   except:
@@ -79,7 +90,7 @@ def logP_score(m,dummy):
   cycle_score_norm=(cycle_score-cycle_mean)/cycle_std
   score_one = SA_score_norm + logp_norm + cycle_score_norm
   
-  return max(score_one,0.0)
+  return score_one
 
 # GuacaMol article https://arxiv.org/abs/1811.09621
 # adapted from https://github.com/BenevolentAI/guacamol/blob/master/guacamol/utils/fingerprints.py
@@ -95,11 +106,6 @@ def get_FCFP4(mol):
 
 def get_FCFP6(mol):
     return AllChem.GetMorganFingerprint(mol, 3, useFeatures=True)
-
-# adapted from https://github.com/BenevolentAI/guacamol/blob/master/guacamol/score_modifier.py
-
-def ThresholdedLinearModifier(score,threshold):
-  return min(score,threshold)/threshold
 
 def rediscovery(mol,args):
   target = args[0]
@@ -121,6 +127,16 @@ def similarity(mol,target,threshold):
     return ThresholdedLinearModifier(score,threshold)
   else:
     return None
+
+# adapted from https://github.com/BenevolentAI/guacamol/blob/master/guacamol/score_modifier.py
+
+def ThresholdedLinearModifier(score,threshold):
+  return min(score,threshold)/threshold
+
+def GaussianModifier(score, target, sigma):
+  return np.exp(-0.5 * np.power((score - target) / sigma, 2.))
+
+
 
 
 if __name__ == "__main__":
