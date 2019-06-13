@@ -5,6 +5,10 @@ guacamol_v1_all.smi
 tiotixene_1000_100.smi
 TanimotoGuacamol.smi
 Tanimoto250K.smi
+*.out
+*.stderr
+*.stdout
+*.smi
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -13,6 +13,11 @@ rdBase.DisableLog('rdApp.error')
 import numpy as np
 import sys
 from multiprocessing import Pool
+import subprocess
+import os
+import shutil
+import string
+import random
 
 import sascorer
 
@@ -92,6 +97,77 @@ def logP_score(m):
   
   return score_one
 
+def shell(cmd, shell=False):
+
+    if shell:
+        p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        cmd = cmd.split()
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    output, err = p.communicate()
+    return output
+
+def write_xtb_input_file(fragment, fragment_name):
+    number_of_atoms = fragment.GetNumAtoms()
+    charge = Chem.GetFormalCharge(fragment)
+    symbols = [a.GetSymbol() for a in fragment.GetAtoms()] 
+    for i,conf in enumerate(fragment.GetConformers()):
+        file_name = fragment_name+"+"+str(i)+".xyz"
+        with open(file_name, "w") as file:
+            file.write(str(number_of_atoms)+"\n")
+            file.write("title\n")
+            for atom,symbol in enumerate(symbols):
+                p = conf.GetAtomPosition(atom)
+                line = " ".join((symbol,str(p.x),str(p.y),str(p.z),"\n"))
+                file.write(line)
+            if charge !=0:
+                file.write("$set\n")
+                file.write("chrg "+str(charge)+"\n")
+                file.write("$end")
+
+def get_structure(mol,n_confs):
+  mol = Chem.AddHs(mol)
+  new_mol = Chem.Mol(mol)
+
+  AllChem.EmbedMultipleConfs(mol,numConfs=n_confs,useExpTorsionAnglePrefs=True,useBasicKnowledge=True)
+  energies = AllChem.MMFFOptimizeMoleculeConfs(mol,maxIters=2000, nonBondedThresh=100.0)
+
+  energies_list = [e[1] for e in energies]
+  min_e_index = energies_list.index(min(energies_list))
+
+  new_mol.AddConformer(mol.GetConformer(min_e_index))
+
+  return new_mol
+
+def compute_absorbance(mol,n_confs,path):
+  mol = get_structure(mol,n_confs)
+  dir = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+  os.mkdir(dir)
+  os.chdir(dir)
+  write_xtb_input_file(mol, 'test')
+  shell(path+'/xtb test+0.xyz',shell=False)
+  out = shell(path+'/stda_1.6 -xtb -e 10',shell=False)
+  #data = str(out).split('Rv(corr)\\n')[1].split('alpha')[0].split('\\n') # this gets all the lines
+  data = str(out).split('Rv(corr)\\n')[1].split('(')[0]
+  wavelength, osc_strength = float(data.split()[2]), float(data.split()[3])
+  os.chdir('..')
+  shutil.rmtree(dir)
+  
+  return wavelength, osc_strength
+
+def absorbance_target(mol,args):
+  n_confs, path, target, sigma, threshold = args
+  try:
+    wavelength, osc_strength = compute_absorbance(mol,n_confs,path)
+  except:
+    return None
+  
+  score = GaussianModifier(wavelength, target, sigma) 
+  score += ThresholdedLinearModifier(osc_strength,threshold)
+
+  return score
+
 # GuacaMol article https://arxiv.org/abs/1811.09621
 # adapted from https://github.com/BenevolentAI/guacamol/blob/master/guacamol/utils/fingerprints.py
 
@@ -134,10 +210,28 @@ def ThresholdedLinearModifier(score,threshold):
   return min(score,threshold)/threshold
 
 def GaussianModifier(score, target, sigma):
-  return np.exp(-0.5 * np.power((score - target) / sigma, 2.))
+  try:
+    score = np.exp(-0.5 * np.power((score - target) / sigma, 2.))
+  except:
+    score = 0.0
+
+  return score
 
 
 
 
 if __name__ == "__main__":
-    pass
+  n_confs = 20
+  xtb_path = '/home/jhjensen/stda'
+  target = 200.
+  sigma = 50.
+  threshold = 0.3
+  smiles = 'Cc1occn1' # Tsuda I
+  mol = Chem.MolFromSmiles(smiles)
+
+  wavelength, osc_strength = compute_absorbance(mol,n_confs,xtb_path)
+  print(wavelength, osc_strength)
+
+  score = absorbance_target(mol,[n_confs, xtb_path, target, sigma, threshold])
+  print(score)
+
