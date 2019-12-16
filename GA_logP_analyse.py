@@ -11,7 +11,7 @@ import random
 
 from rdkit import rdBase
 
-n_tries = 10 #10
+n_tries = 1 #10
 population_size = 20
 mating_pool_size = 20
 generations = 50
@@ -21,8 +21,8 @@ co.size_stdev = 3.50
 scoring_function = sc.logP_max
 max_score = 9999.
 scoring_args = []
-n_cpus = 10
-seeds = np.random.randint(100_000, size=2*n_tries)
+n_cpus = 1
+seeds = [0]
 
 file_name = sys.argv[1]
 
@@ -36,13 +36,14 @@ print('* average_size/size_stdev', co.average_size, co.size_stdev)
 print('* initial pool', file_name)
 print('* number of tries', n_tries)
 print('* number of CPUs', n_cpus)
-print('* seeds', ','.join(map(str, seeds)))
+print('* seeds', ','.join(list(map(str, seeds))))
 print('* ')
-print('run,score,smiles,generations,representation,prune')
+#remember to uncomment print statement in GB_GA reproduce
+print('mut_child,new_child,parent_A,parent_B')
 
 high_scores_list = []
 count = 0
-for prune_population in [True, False]:
+for prune_population in [True]:
     index = slice(0,n_tries) if prune_population else slice(n_tries,2*n_tries)
     temp_args = [[population_size, file_name,scoring_function,generations,mating_pool_size,
                   mutation_rate,scoring_args, max_score, prune_population] for i in range(n_tries)]
@@ -58,6 +59,6 @@ for prune_population in [True, False]:
         (scores, population, high_scores, generation) = output[i]
         smiles = Chem.MolToSmiles(population[0], isomericSmiles=True)
         high_scores_list.append(high_scores)
-        print(f'{i},{scores[0]:.2f},{smiles},{generation},Graph,{prune_population}')
+        #print(f'{i},{scores[0]:.2f},{smiles},{generation},Graph,{prune_population}')
 
-pickle.dump(high_scores_list, open('test.p', 'wb' ))
+pickle.dump(high_scores_list, open('test_try.p', 'wb' ))

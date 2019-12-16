@@ -59,9 +59,10 @@ def reproduce(mating_pool,population_size,mutation_rate):
     parent_B = random.choice(mating_pool)
     new_child = co.crossover(parent_A,parent_B)
     if new_child != None:
-	    new_child = mu.mutate(new_child,mutation_rate)
-	    if new_child != None:
-	    	new_population.append(new_child)
+      mutated_child = mu.mutate(new_child,mutation_rate)
+      if mutated_child != None:
+        #print(','.join([Chem.MolToSmiles(mutated_child),Chem.MolToSmiles(new_child),Chem.MolToSmiles(parent_A),Chem.MolToSmiles(parent_B)]))
+        new_population.append(mutated_child)
 
   return new_population
 
@@ -85,22 +86,27 @@ def sanitize(population,scores,population_size, prune_population):
 
 def GA(args):
   population_size, file_name,scoring_function,generations,mating_pool_size,mutation_rate, \
-  scoring_args, max_score, prune_population = args
+  scoring_args, max_score, prune_population, seed = args
 
+  np.random.seed(seed)
+  random.seed(seed)
+  
   population = make_initial_population(population_size,file_name)
   scores = sc.calculate_scores(population,scoring_function,scoring_args)
   fitness = calculate_normalized_fitness(scores)
 
+  high_scores = []
   for generation in range(generations):
     mating_pool = make_mating_pool(population,fitness,mating_pool_size)
     new_population = reproduce(mating_pool,population_size,mutation_rate)
     new_scores = sc.calculate_scores(new_population,scoring_function,scoring_args)
     population, scores = sanitize(population+new_population, scores+new_scores, population_size, prune_population)  
     fitness = calculate_normalized_fitness(scores)
+    high_scores.append((scores[0],Chem.MolToSmiles(population[0])))
     if scores[0] >= max_score:
       break
 
-  return (scores, population, generation+1)
+  return (scores, population, high_scores, generation+1)
 
 
 if __name__ == "__main__":
