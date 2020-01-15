@@ -6,6 +6,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from rdkit.DataStructs.cDataStructs import TanimotoSimilarity
+from rdkit.Chem import rdFMCS
 
 from rdkit import rdBase
 rdBase.DisableLog('rdApp.error')
@@ -146,8 +147,8 @@ def compute_absorbance(mol,n_confs,path):
   os.mkdir(dir)
   os.chdir(dir)
   write_xtb_input_file(mol, 'test')
-  shell(path+'/xtb test+0.xyz',shell=False)
-  out = shell(path+'/stda_1.6 -xtb -e 10',shell=False)
+  shell(path+'/xtb4stda test+0.xyz',shell=False)
+  out = shell(path+'/stda_v1.6.1 -xtb -e 10',shell=False)
   #data = str(out).split('Rv(corr)\\n')[1].split('alpha')[0].split('\\n') # this gets all the lines
   data = str(out).split('Rv(corr)\\n')[1].split('(')[0]
   wavelength, osc_strength = float(data.split()[2]), float(data.split()[3])
@@ -161,7 +162,7 @@ def absorbance_target(mol,args):
   try:
     wavelength, osc_strength = compute_absorbance(mol,n_confs,path)
   except:
-    return None
+    return 0.0
   
   score = GaussianModifier(wavelength, target, sigma) 
   score += ThresholdedLinearModifier(osc_strength,threshold)
@@ -191,6 +192,17 @@ def rediscovery(mol,args):
 
     score = TanimotoSimilarity(fp_mol, fp_target)
 
+    return score
+  
+  except:
+    print('Failed ',Chem.MolToSmiles(mol))
+    return None
+
+def MCS(mol,args):
+  target = args[0]
+  try:
+    mcs = rdFMCS.FindMCS([mol, target], bondCompare=rdFMCS.BondCompare.CompareOrderExact,ringMatchesRingOnly=True,completeRingsOnly=True)
+    score = mcs.numAtoms/target.GetNumAtoms()
     return score
   
   except:
