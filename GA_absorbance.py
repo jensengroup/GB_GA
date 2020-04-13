@@ -18,13 +18,13 @@ max_score = 1.99
 
 population_size = 20 
 mating_pool_size = 20
-generations = 10
-mutation_rate = 0.5
+generations = 50
+mutation_rate = 0.05
 co.average_size = 50. 
 co.size_stdev = 5.
-prune_population = True
-n_tries = 2
-n_cpus = 2
+prune_population = False
+n_tries = 10
+n_cpus = 8
 
 file_name = sys.argv[1]
 

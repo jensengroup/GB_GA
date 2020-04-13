@@ -7,20 +7,20 @@ import GB_GA as ga
 import sys
 from multiprocessing import Pool
 
-n_tries = 2
+n_tries = 10
 population_size = 20 
 mating_pool_size = 20
-generations = 20
+generations = 100
 mutation_rate = 0.01
-co.average_size = 39.15
-co.size_stdev = 3.50
+co.average_size = 50.
+co.size_stdev = 5
 scoring_function = sc.logP_target
 max_score = 0.99
-target = 8.
+target = -1.
 sigma = 2.
 scoring_args = [target,sigma]
-prune_population = True
-n_cpus = 2
+prune_population = False
+n_cpus = 8
 
 file_name = sys.argv[1]
 
@@ -59,7 +59,7 @@ for i in range(n_tries):
 t1 = time.time()
 print('')
 print(f'max score {max(results):.2f}, mean {np.array(results).mean():.2f} +/- {np.array(results).std():.2f}')
-print(f'mean generations {np.array(generations_list).mean():.2f} +/- {np.array(generations_list).std():.2f}')
+print(f'max generation {max(generations_list):.2f}, mean generations {np.array(generations_list).mean():.2f} +/- {np.array(generations_list).std():.2f}')
 print(f'time {(t1-t0)/60.0:.2f} minutes')
 #print(max(size),np.array(size).mean(),np.array(size).std())
 
