@@ -18,8 +18,6 @@ import sys
 
 import crossover as co
 import mutate as mu
-#import string_crossover as co
-#import string_mutate as mu
 import scoring_functions as sc
 
 def read_file(file_name):
@@ -91,11 +89,14 @@ def GA(args):
   np.random.seed(seed)
   random.seed(seed)
   
+  high_scores = [] 
   population = make_initial_population(population_size,file_name)
   scores = sc.calculate_scores(population,scoring_function,scoring_args)
+  #reorder so best score comes first
+  population, scores = sanitize(population, scores, population_size, False)  
+  high_scores.append((scores[0],Chem.MolToSmiles(population[0])))
   fitness = calculate_normalized_fitness(scores)
 
-  high_scores = []
   for generation in range(generations):
     mating_pool = make_mating_pool(population,fitness,mating_pool_size)
     new_population = reproduce(mating_pool,population_size,mutation_rate)
