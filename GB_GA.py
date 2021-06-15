@@ -8,8 +8,10 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from rdkit.Chem import rdmolops
 
-from rdkit import rdBase
-rdBase.DisableLog('rdApp.error')
+#from rdkit import rdBase
+#rdBase.DisableLog('rdApp.error')
+from rdkit import RDLogger  
+RDLogger.DisableLog('rdApp.*')
 
 import numpy as np
 import random
@@ -70,6 +72,7 @@ def sanitize(population,scores,population_size, prune_population):
       population_tuples = []
       for score, mol in zip(scores,population):
           smiles = Chem.MolToSmiles(mol)
+          smiles = Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
           if smiles not in smiles_list:
               smiles_list.append(smiles)
               population_tuples.append((score,mol))
