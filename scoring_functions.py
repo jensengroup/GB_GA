@@ -51,10 +51,10 @@ def calculate_scores_parallel(population,function,scoring_args, n_cpus):
   return scores
 
 def calculate_scores(population,function,scoring_args):
-  scores = []
-  for gene in population:
-    score = function(gene,scoring_args)
-    scores.append(score)
+  if 'pop' in function.__name__:
+    scores = function(population,scoring_args)
+  else:
+    scores = [function(gene,scoring_args) for gene in population]
 
   return scores 
 
